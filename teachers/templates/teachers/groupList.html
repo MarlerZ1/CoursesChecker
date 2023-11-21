@@ -1,0 +1,21 @@
+{% extends 'users/base.html' %}
+{% load static %}
+{% block css %}
+    <link href="{% static 'css/header.css' %}" rel="stylesheet">
+    <link href="{% static 'css/narrowColumn.css' %}" rel="stylesheet">
+    <link href="{% static 'css/base.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+        <div class="content">
+            <div class="leftblock"></div>
+            <div class="center">
+            <div class="groups">
+                {% for group in groups %}
+                    <a href="{% url 'teachers:group' group.id%}"><div class="groupCard cenralize"><h2>{{ group }}</h2></div></a>
+                {% endfor%}
+            </div>
+            </div>
+            <div class="rightblock"></div>
+        </div>
+{% endblock %}

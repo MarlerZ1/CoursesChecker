@@ -1,0 +1,34 @@
+{% extends 'students/../../../users/templates/users/base.html' %}
+{% load static %}
+{% block css %}
+	 <link href="{% static 'css/header.css' %}" rel="stylesheet">
+     <link href="{% static 'css/narrowColumn.css' %}" rel="stylesheet">
+    <link href="{% static 'css/base.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+    <div class="content">
+        <div class="leftblock"></div>
+        <div class="center">
+            <h2 class="mainHeader">Список работ</h2>
+            <div class="works">
+                {% for work in works %}
+                {% if not work.isEvaluate %} <a href="{% url 'students:workEditor' work.id%}"> {% endif %}
+                    <div class="workCard {% if work.isEvaluate %}onEvaluation{% else %} {% if work.grade < 3 %} returned {% else %} accepted {% endif %} {% endif %}">
+                        <h3 class="workName">{{ work.task.number }} {{ work.task.name }}</h3>
+                        <p class="description"> {{ work.task.getDescription }} </p>
+                        {% if work.grade > 0 or work.returnNumber > 0 %}<p class="grade">{{ work.grade }}</p> {% endif %}
+                    </div>
+                {% if not work.isEvaluate %} </a> {% endif %}
+            {% endfor %}
+
+            </div>
+
+            <div class="inner"><a class="addWorkButtonCard" href="{% url 'students:workEditor' %}"><div class="addWorkButton inner">Добавить работу</div></a></div>
+
+        </div>
+        <div class="rightblock"></div>
+
+    </div>
+{% endblock %}

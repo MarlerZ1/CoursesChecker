@@ -1,0 +1,124 @@
+{% extends 'students/../../../users/templates/users/base.html' %}
+{% load static %}
+{% block css %}
+	<link href="{% static 'css/header.css' %}" rel="stylesheet">
+    <link href="{% static 'css/wideColumn.css' %}" rel="stylesheet">
+    <link href="{% static 'css/base.css' %}" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{% endblock %}
+
+{% block content %}
+     <div class="content">
+        <div class="leftblock"></div>
+        <div class="center">
+            {% if messages %}
+                <div class="outer">
+                    <div class="alert inner">
+                        {% for message in messages %}
+                            <b>{{ message }}</b>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if work == None or work.grade < 3 %}
+
+                <form action="{% if work != None %} {% url 'students:workEditor' work.id %} {% else %} {% url 'students:workEditor' %} {% endif %}" method="post">
+                    {% csrf_token %}
+                    <div class="outer">
+                        <div class="inner width-100 taskBlock">{{ form.task }}</div>
+                        <script>
+                            $(document).ready(function () {
+                                $('#id_task').change(function() {
+                                    $task_id = $(this).val()
+
+                                    $.ajax({
+                                        url: "{% url 'students:descriptionAsync' %}",
+                                        data: { id: $task_id },
+                                        success: function(data){
+                                            $("#description").html(data.description);
+                                        }
+                                    });
+                                });
+                            });
+                        </script>
+                        <br>
+                    <div>
+                        <div>
+                            <p id="description" class="description">{{ defaultDescribe }}</p>
+                        </div>
+                    </div>
+                     <div class="inner width-100">
+                        <p class="margin-vertical-16"><b>Ваш код</b></p>
+                     </div>
+                        <div class="inner width-100">{{ form.code }}</div>
+                        <script>
+                          $(document).ready(function () {
+                            $("#code").on("input", function () {
+                              this.style.height = "auto";
+                              this.style.height = this.scrollHeight + 10 + "px";
+                            });
+                          });
+                        </script>
+                        <br>
+                        {#    <label class="small mb-1" for="{{ form.password.id_for_label }}">Пароль</label>#}
+                        {% if feedback != None%}
+                            <div class="outer width-100">
+                                    <div class="inner width-100">
+                                        <br>
+                                        <p class="margin-vertical-16"><b>Описание ошибок</b></p>
+                                    </div>
+                                    <div class="inner width-100 divtext">
+                                        {{ feedback.mistakeDescription }}
+                                        <br>
+                                    </div>
+                            </div>
+
+                            <div class="outer width-100">
+                                    <div class="inner width-100">
+                                        <br>
+                                        <p class="margin-vertical-16"><b>Предлагаемое решение</b></p>
+                                    </div>
+                                    <div class="inner width-100 divtext">
+                                        {{ feedback.proposedSolution }}
+                                        <br>
+                                    </div>
+                            </div>
+                        {% endif %}
+                    <button type="submit" class="submit">Отправить</button>
+                    </div>
+
+
+                </form>
+            {% else %}
+                <div class="outer">
+                    <div class="inner">
+                        <h2> {{ work.task.number }} {{ work.task.name }}</h2>
+                        <br>
+                    </div>
+                </div>
+
+                    <div class="width-100">
+                        <p class="description"> {{ work.task.description }}</p>
+                        <br>
+                    </div>
+                <div class="outer width-100">
+                        <div class="inner width-100 divtext">
+                            {{ work.code | linebreaks }}
+                            <br>
+                        </div>
+                </div>
+                <div class="outer">
+                        <div class="inner">
+                            <p>Оценка: {{ work.grade }}</p>
+                            <br>
+                        </div>
+                </div>
+
+            {% endif %}
+
+        </div>
+        <div class="rightblock"></div>
+
+     </div>
+{% endblock %}
